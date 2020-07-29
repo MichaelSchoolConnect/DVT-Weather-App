@@ -6,7 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <TextView
-        android:id="@+id/offline_tv_1"
+        android:id="@+id/item_tv_1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:hapticFeedbackEnabled="true"
@@ -31,7 +31,7 @@
         android:layout_marginStart="32dp"
         android:text="TextView"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/offline_tv_1"
+        app:layout_constraintEnd_toStartOf="@+id/item_tv_1"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -46,7 +46,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="34dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/offline_tv_1"
+        app:layout_constraintEnd_toStartOf="@+id/item_tv_1"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_action_favourite_border"
         style="?android:attr/borderlessButtonStyle"

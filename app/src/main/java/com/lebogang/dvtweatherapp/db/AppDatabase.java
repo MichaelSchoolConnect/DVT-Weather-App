@@ -7,11 +7,13 @@ import androidx.room.TypeConverters;
 import android.content.Context;
 import android.util.Log;
 
-import com.lebogang.dvtweatherapp.db.dao.DataDao;
+import com.lebogang.dvtweatherapp.db.dao.FavouritesDao;
+import com.lebogang.dvtweatherapp.db.dao.OfflineDataDao;
 import com.lebogang.dvtweatherapp.db.dateconverter.DateConverter;
-import com.lebogang.dvtweatherapp.db.entity.DataEntity;
+import com.lebogang.dvtweatherapp.db.entity.FavouritesEntity;
+import com.lebogang.dvtweatherapp.db.entity.OfflineDataEntity;
 
-@Database(entities = {DataEntity.class}, version = 1, exportSchema = false)
+@Database(entities = {FavouritesEntity.class, OfflineDataEntity.class}, version = 1, exportSchema = false)
 @TypeConverters(DateConverter.class)
 public abstract class AppDatabase extends RoomDatabase {
 
@@ -33,6 +35,8 @@ public abstract class AppDatabase extends RoomDatabase {
         return sInstance;
     }
 
-    public abstract DataDao dataDao();
+    public abstract FavouritesDao favouritesDao();
+
+    public abstract OfflineDataDao offlineDataDao();
 
 }

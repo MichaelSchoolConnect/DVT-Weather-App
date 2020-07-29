@@ -16,6 +16,7 @@
 
 package com.lebogang.dvtweatherapp.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,8 +27,7 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.lebogang.dvtweatherapp.R;
-import com.lebogang.dvtweatherapp.db.AppDatabase;
-import com.lebogang.dvtweatherapp.db.entity.DataEntity;
+import com.lebogang.dvtweatherapp.db.entity.FavouritesEntity;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -45,23 +45,20 @@ public class FavouritesAdapter extends RecyclerView.Adapter<FavouritesAdapter.Fa
     private static final String DATE_FORMAT = "dd/MM/yyy";
 
     // Class variables for the List that holds task data and the Context
-    private List<DataEntity> mTaskEntries;
+    private List<FavouritesEntity> mTaskEntries;
     private Context mContext;
     // Date formatter
     private SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT, Locale.getDefault());
-    // Member variable for the Database
-    private AppDatabase mDb;
 
     /**
      * Constructor for the FavouritesAdapter that initializes the Context.
      *
      * @param context  the current Context
      */
-    public FavouritesAdapter(Context context, List<DataEntity> dataEntityList) {
+    public FavouritesAdapter(Context context, List<FavouritesEntity> favouritesEntityList) {
         Log.i(TAG, "Initialized...");
         mContext = context;
-        mTaskEntries = dataEntityList;
-        mDb = AppDatabase.getInstance(mContext);
+        mTaskEntries = favouritesEntityList;
     }
 
     /**
@@ -85,13 +82,12 @@ public class FavouritesAdapter extends RecyclerView.Adapter<FavouritesAdapter.Fa
      * @param holder   The ViewHolder to bind Cursor data to
      * @param position The position of the data in the Cursor
      */
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(FavouritesViewHolder holder, int position) {
         Log.i(TAG, "onBindViewHolder()");
 
-        FavouritesViewHolder favouritesViewHolder = (FavouritesViewHolder) holder;
-
-        final DataEntity taskEntry = mTaskEntries.get(position);
+        final FavouritesEntity taskEntry = mTaskEntries.get(position);
 
         String description = taskEntry.getText();
         String updatedAt = dateFormat.format(taskEntry.getUpdatedAt());

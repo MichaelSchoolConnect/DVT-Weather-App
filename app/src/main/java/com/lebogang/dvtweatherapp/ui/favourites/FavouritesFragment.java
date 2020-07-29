@@ -16,7 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.lebogang.dvtweatherapp.R;
 import com.lebogang.dvtweatherapp.adapter.FavouritesAdapter;
-import com.lebogang.dvtweatherapp.db.entity.DataEntity;
+import com.lebogang.dvtweatherapp.db.entity.FavouritesEntity;
 
 import java.util.List;
 
@@ -27,11 +27,14 @@ public class FavouritesFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
     private FavouritesAdapter mAdapter;
+    private FavouritesViewModel viewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         Log.i(TAG, "onCreateView()");
         View root = inflater.inflate(R.layout.fragment_favourites, container, false);
+
+        viewModel = new ViewModelProvider(this).get(FavouritesViewModel.class);
 
         // Set the RecyclerView to its corresponding view
         // Member variables for the adapter and RecyclerView
@@ -55,21 +58,12 @@ public class FavouritesFragment extends Fragment {
 
     private void setUpViewModel() {
         Log.i(TAG, "Called ViewModelProviders");
-        FavouritesViewModel viewModel = new ViewModelProvider(this).get(FavouritesViewModel.class);
-        //
-        viewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
+        viewModel.getDataFromFavDB().observe(getViewLifecycleOwner(), new Observer<List<FavouritesEntity>>() {
             @Override
-            public void onChanged(String s) {
-                Log.i(TAG, s);
-            }
-        });
+            public void onChanged(List<FavouritesEntity> favouritesEntities) {
+                Log.i(TAG, "onChanged() : " + favouritesEntities);
 
-        viewModel.getDataFromDB().observe(getViewLifecycleOwner(), new Observer<List<DataEntity>>() {
-            @Override
-            public void onChanged(List<DataEntity> weatherDataEntities) {
-                Log.i(TAG, "onChanged() : " + (weatherDataEntities));
-
-                mAdapter = new FavouritesAdapter(getContext(), weatherDataEntities);
+                mAdapter = new FavouritesAdapter(getContext(), favouritesEntities);
                 mRecyclerView.setAdapter(mAdapter);
             }
         });

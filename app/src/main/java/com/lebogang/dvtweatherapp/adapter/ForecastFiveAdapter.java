@@ -15,7 +15,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.lebogang.dvtweatherapp.R;
 import com.lebogang.dvtweatherapp.db.AppDatabase;
 import com.lebogang.dvtweatherapp.db.AppExecutors;
-import com.lebogang.dvtweatherapp.db.entity.DataEntity;
+import com.lebogang.dvtweatherapp.db.entity.FavouritesEntity;
+import com.lebogang.dvtweatherapp.db.entity.OfflineDataEntity;
 import com.lebogang.dvtweatherapp.pojo.ForecastFivePojo;
 
 import java.util.Date;
@@ -48,38 +49,39 @@ public class ForecastFiveAdapter extends RecyclerView.Adapter<ForecastFiveAdapte
     @Override
     public void onBindViewHolder(@NonNull WeatherDataViewHolder holder, int position) {
         //Log.i(TAG, "onBindViewHolder()");
-        WeatherDataViewHolder weatherDataViewHolder = (WeatherDataViewHolder) holder;
         final ForecastFivePojo forecastFivePojo = forecastFivePojoList.get(position);
 
-        int i = forecastFivePojo.temp;
+        int temp = forecastFivePojo.getTemp();
+
         String data = forecastFivePojo.getData();
-        weatherDataViewHolder.weather_textView.setText(String.valueOf(i));
-        Log.i(TAG, String.valueOf(i));
+        holder.weather_textView.setText(String.valueOf(temp));
+        Log.i(TAG, String.valueOf(temp));
 
-        onClick(holder, data);
+        onClick(holder, data, temp);
 
-        //insertOfflineData();
+        insertOfflineData(temp);
 
     }
 
-    private void onClick(WeatherDataViewHolder weatherDataViewHolder, String data){
+    // Insert data into Fav db
+    private void onClick(WeatherDataViewHolder weatherDataViewHolder, String data, int temp){
         // When clicking on location text or re-organized fav btn.
         weatherDataViewHolder.imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.i(TAG, "itemView clicked!");
-                // DataEntity
+                // FavouritesEntity
                 if (!data.isEmpty()) {
                     Date date = new Date();
                     double dummyLat = 65.0;
                     double dummyLng = 09.40;
 
-                    DataEntity dataEntity = new DataEntity(data, dummyLat, dummyLng, date, 0);
+                    FavouritesEntity favouritesEntity = new FavouritesEntity(data, dummyLat, dummyLng, date, temp);
                     AppExecutors.getInstance().diskIO().execute(new Runnable() {
                         @Override
                         public void run() {
                             Log.i(TAG, "data inserted in db");
-                            mDb.dataDao().insertFavourites(dataEntity);
+                            mDb.favouritesDao().insertFavourites(favouritesEntity);
                         }
                     });
                 }else{
@@ -89,15 +91,13 @@ public class ForecastFiveAdapter extends RecyclerView.Adapter<ForecastFiveAdapte
         });
     }
 
-    private void insertOfflineData(){
-        AppDatabase database = AppDatabase.getInstance(context);
-        Date date = new Date();
-        DataEntity dataEntity = new DataEntity("null", 0.0, 0.0, date, 23);
+    private void insertOfflineData(int temp){
+        OfflineDataEntity offlineDataEntity = new OfflineDataEntity(temp);
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
                 Log.i(TAG, "data inserted in offline db");
-                database.dataDao().insertOfflineData(dataEntity);
+                mDb.offlineDataDao().insertOfflineData(offlineDataEntity);
             }
         });
     }
@@ -114,7 +114,7 @@ public class ForecastFiveAdapter extends RecyclerView.Adapter<ForecastFiveAdapte
 
         public WeatherDataViewHolder(@NonNull View itemView) {
             super(itemView);
-            weather_textView = itemView.findViewById(R.id.offline_tv_1);
+            weather_textView = itemView.findViewById(R.id.item_tv_1);
             imageButton = itemView.findViewById(R.id.fav_image_btn);
         }
     }

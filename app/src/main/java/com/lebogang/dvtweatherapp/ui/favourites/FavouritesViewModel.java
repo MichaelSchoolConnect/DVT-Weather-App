@@ -3,12 +3,12 @@ package com.lebogang.dvtweatherapp.ui.favourites;
 import android.app.Application;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 
 import com.lebogang.dvtweatherapp.db.AppDatabase;
-import com.lebogang.dvtweatherapp.db.entity.DataEntity;
+import com.lebogang.dvtweatherapp.db.entity.FavouritesEntity;
 
 import java.util.List;
 
@@ -18,25 +18,18 @@ public class FavouritesViewModel extends AndroidViewModel {
     // Constant for logging
     private static final String TAG = FavouritesViewModel.class.getSimpleName();
 
-    private LiveData<List<DataEntity>> tasks;
-
-    private MutableLiveData<String> mText;
+    @NonNull
+    private LiveData<List<FavouritesEntity>> getFavLiveData;
 
     public FavouritesViewModel(Application application) {
         super(application);
         Log.i(TAG, "Actively retrieving the tasks from the DataBase");
-        AppDatabase database = AppDatabase.getInstance(this.getApplication());
-        tasks = database.dataDao().getAllFavouritesData();
-        mText = new MutableLiveData<>();
-       // Log.i(TAG, mText.getValue());
+        AppDatabase database = AppDatabase.getInstance(application);
+        getFavLiveData = database.favouritesDao().getAllFavouritesData();
     }
 
-    public LiveData<String> getText() {
-        return mText;
-    }
-
-    public LiveData<List<DataEntity>> getDataFromDB() {
+    public LiveData<List<FavouritesEntity>> getDataFromFavDB() {
         Log.i(TAG, "Reading from the DataBase");
-        return tasks;
+        return getFavLiveData;
     }
 }

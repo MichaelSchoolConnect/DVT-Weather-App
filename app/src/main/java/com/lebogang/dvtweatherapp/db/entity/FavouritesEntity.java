@@ -7,8 +7,9 @@ import androidx.room.PrimaryKey;
 
 import java.util.Date;
 
-@androidx.room.Entity(tableName = "weatherdata")
-public class DataEntity {
+// An @Entity represents a table within a database
+@Entity(tableName = "weatherdata")
+public class FavouritesEntity {
 
     @PrimaryKey(autoGenerate = true)
     private int id;
@@ -30,16 +31,19 @@ public class DataEntity {
     private int temp;
 
     @Ignore
-    public DataEntity(){}
+    public FavouritesEntity(){}
 
     @Ignore
-    public DataEntity(int id, String text, Date updatedAt){
+    public FavouritesEntity(int id, String text, double lat, double lng, Date updatedAt, int temp){
         this.id = id;
         this.text = text;
+        this.lat = lat;
+        this.lng = lng;
         this.updatedAt = updatedAt;
+        this.temp = temp;
     }
 
-    public DataEntity(String text, double lat, double lng, Date updatedAt, int temp){
+    public FavouritesEntity(String text, double lat, double lng, Date updatedAt, int temp){
         this.text = text;
         this.lat = lat;
         this.lng = lng;

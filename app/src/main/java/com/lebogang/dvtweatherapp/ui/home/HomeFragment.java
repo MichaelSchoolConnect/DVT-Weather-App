@@ -27,7 +27,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.lebogang.dvtweatherapp.DataRepository;
 import com.lebogang.dvtweatherapp.R;
 import com.lebogang.dvtweatherapp.adapter.ForecastFiveAdapter;
-import com.lebogang.dvtweatherapp.db.entity.DataEntity;
+import com.lebogang.dvtweatherapp.adapter.OfflineDataAdapter;
+import com.lebogang.dvtweatherapp.db.entity.OfflineDataEntity;
 import com.lebogang.dvtweatherapp.locationservice.TrackerService;
 
 import java.util.List;
@@ -54,6 +55,8 @@ private Context context = HomeFragment.this.getContext();
         try {
             root = inflater.inflate(R.layout.fragment_home, container, false);
 
+            model = new ViewModelProvider(this).get(HomeViewModel.class);
+
             //Show LoadingProgressBar
             contentLoadingProgressBar = root.findViewById(R.id.loadingBar);
             contentLoadingProgressBar.show();
@@ -69,9 +72,8 @@ private Context context = HomeFragment.this.getContext();
                 setUpViewModel();
             }else{
                 //read from db
-                contentLoadingProgressBar.hide();
                 Log.i(TAG, "No internet connection");
-                //setOfflineViewModel();
+                setOfflineViewModel();
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -90,7 +92,7 @@ private Context context = HomeFragment.this.getContext();
 
     private void setUpViewModel(){
         Log.i(TAG, "setUpViewModel()");
-        model = new ViewModelProvider(this).get(HomeViewModel.class);
+
 
         //Observe location
         model.getCityName().observe(getViewLifecycleOwner(), new Observer<String>() {
@@ -98,6 +100,7 @@ private Context context = HomeFragment.this.getContext();
             public void onChanged(String s) {
                 // Update URL.
                 Log.i(TAG, "Location onChanged: " + s);
+
             }
         });
 
@@ -111,11 +114,13 @@ private Context context = HomeFragment.this.getContext();
     }
 
     private void setOfflineViewModel(){
-        Log.i(TAG, "setUpViewModel()");
-        model.getDataFromOfflineDB().observe(getViewLifecycleOwner(), new Observer<List<DataEntity>>() {
+        Log.i(TAG, "setOfflineViewModel()");
+        model.getDataFromOfflineDB().observe(getViewLifecycleOwner(), new Observer<List<OfflineDataEntity>>() {
             @Override
-            public void onChanged(List<DataEntity> entityList) {
-                Log.i(TAG, "Offline db");
+            public void onChanged(List<OfflineDataEntity> entityList) {
+                Log.i(TAG, "onChanged: " + (entityList));
+                OfflineDataAdapter offlineDataAdapter = new OfflineDataAdapter(getContext(), entityList);
+                recyclerView.setAdapter(offlineDataAdapter);
             }
         });
     }

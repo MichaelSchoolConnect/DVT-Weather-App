@@ -25,8 +25,9 @@ public class ForecastFivePojo {
 
     public ForecastFivePojo(){}
 
-    public ForecastFivePojo(String data){
+    public ForecastFivePojo(String data, int temp){
         this.data = data;
+        this.temp = temp;
     }
 
     public String getData() {

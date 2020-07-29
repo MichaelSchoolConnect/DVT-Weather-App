@@ -9,11 +9,9 @@ import androidx.lifecycle.LiveData;
 
 import com.lebogang.dvtweatherapp.DataRepository;
 import com.lebogang.dvtweatherapp.db.AppDatabase;
-import com.lebogang.dvtweatherapp.db.entity.DataEntity;
+import com.lebogang.dvtweatherapp.db.entity.OfflineDataEntity;
 import com.lebogang.dvtweatherapp.locationservice.TrackerService;
 import com.lebogang.dvtweatherapp.pojo.ForecastFivePojo;
-
-import org.w3c.dom.Entity;
 
 import java.util.List;
 
@@ -21,12 +19,15 @@ public class HomeViewModel extends AndroidViewModel {
 
     private String TAG = HomeViewModel.class.getSimpleName();
 
+    // Online
     @NonNull
-    private LiveData<List<ForecastFivePojo>> mLiveData2;
+    private LiveData<List<ForecastFivePojo>> forecastFiveLiveData;
 
+    // Offline
     @NonNull
-    private LiveData<List<DataEntity>> liveData;
+    private LiveData<List<OfflineDataEntity>> getAllOfflineData;
 
+    // Location
     @NonNull
     private LiveData<String> mLocation;
 
@@ -34,14 +35,17 @@ public class HomeViewModel extends AndroidViewModel {
         super(application);
         Log.i(TAG, "ViewModel init...");
 
+        // Get data from the repo
         DataRepository repo = DataRepository.getInstance();
-        mLiveData2 = repo.getWeatherData();
+        forecastFiveLiveData = repo.getWeatherData();
 
+        // Monitor any location changes from the service
         TrackerService trackerService = new TrackerService();
         mLocation = trackerService.getCityName();
 
-        AppDatabase database = AppDatabase.getInstance(this.getApplication());
-        liveData = database.dataDao().getAllOfflineData();
+        // Get data from the offline database.
+        AppDatabase database = AppDatabase.getInstance(application);
+        getAllOfflineData = database.offlineDataDao().getAllOfflineData();
     }
 
 
@@ -52,12 +56,12 @@ public class HomeViewModel extends AndroidViewModel {
 
     @NonNull
     public LiveData<List<ForecastFivePojo>> getHousesData() {
-        return mLiveData2;
+        return forecastFiveLiveData;
     }
 
-    public LiveData<List<DataEntity>> getDataFromOfflineDB() {
+    public LiveData<List<OfflineDataEntity>> getDataFromOfflineDB() {
         Log.i(TAG, "Reading from the DataBase");
-        return liveData;
+        return getAllOfflineData;
     }
 
     //To keep track of the lifetime of this viewModel.
